@@ -28,6 +28,57 @@ We have a Freemium pricing model. Start using our services now for FREE and exte
 You can use any text editor for writing HTML, CSS, and JavaScript. However, we recommend you try [Visual Studio Code](https://code.visualstudio.com) + [Vetur extension](https://marketplace.visualstudio.com/items?itemName=octref.vetur) to highlight your code.
 
 # STEP 2 - Option 1. Display a map with [Mapbox GL](https://docs.mapbox.com/mapbox-gl-js/api/)
+1. Go to the application directory.
+2. Run `npm install mapbox-gl` to install Mapbox GL library.
+3. Modify src/components/MyMap.vue:
+* Remove placeholder
+* Add Mapbox GL Styles
+* Add Mapbox GL Map
+```vue
+<template>
+  <div class="map-container" ref="myMap"></div>
+</template>
+
+<script>
+import mapboxgl from 'mapbox-gl';
+
+export default {
+  name: "MyMap",
+  mounted: function() {
+    const myAPIKey = "YOUR_API_KEY_HERE";
+    const mapStyle = "https://maps.geoapify.com/v1/styles/osm-carto/style.json";
+
+    const initialState = {
+      lng: 11,
+      lat: 49,
+      zoom: 4
+    };
+
+    const map = new mapboxgl.Map({
+      container: this.$refs.myMap,
+      style: `${mapStyle}?apiKey=${myAPIKey}`,
+      center: [initialState.lng, initialState.lat],
+      zoom: initialState.zoom
+    });
+
+    const markerPopup = new mapboxgl.Popup().setText('Some marker');
+    new mapboxgl.Marker().setLngLat([initialState.lng, initialState.lat]).setPopup(markerPopup).addTo(map);
+  }
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+@import "~mapbox-gl/dist/mapbox-gl.css";
+
+.map-container {
+  height: 100%;
+  width: 100%;
+}
+</style>
+```
+4. Replace YOUR_API_KEY_HERE with an API key you've got on [Geoapify MyProjects](https://myprojects.geoapify.com).
+5. Set the mapStyle variable to [Map style](https://apidocs.geoapify.com/docs/maps/map-tiles/map-tiles) you want to use. 
 
 # STEP 2 - Option 2. Display a map with [Leaflet](https://leafletjs.com/)
 
