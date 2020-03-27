@@ -99,7 +99,7 @@ import {} from "mapbox-gl-leaflet";
 export default {
   name: "MyMap",
   mounted: function() {
-    const myAPIKey = "YOUR_API_HERE";
+    const myAPIKey = "YOUR_API_KEY_HERE";
     const mapStyle = "https://maps.geoapify.com/v1/styles/osm-carto/style.json";
 
     const initialState = {
@@ -143,6 +143,53 @@ export default {
 5. Set the mapStyle variable to [Map style](https://apidocs.geoapify.com/docs/maps/map-tiles/map-tiles) you want to use. 
 
 # STEP 2 - Option 3. Display a map with [OpenLayers](https://openlayers.org)
+1. Go to the application directory.
+2. Run `npm install ol ol-mapbox-style` to install OpenLayers library and Mapbox map style support.
+3. Modify src/components/MyMap.vue:
+* Remove placeholder
+* Add OpenLayers Styles
+* Add OpenLayers map
+```vue
+<template>
+  <div class="map-container" ref="myMap"></div>
+</template>
+
+<script>
+import olms from 'ol-mapbox-style';
+import * as proj from 'ol/proj';
+
+export default {
+  name: "MyMap",
+  mounted: function() {
+    const initialState = {
+      lng: 11,
+      lat: 49,
+      zoom: 4
+    };
+
+    const myAPIKey = 'YOUR_API_KEY_HERE';
+    const mapStyle = 'https://maps.geoapify.com/v1/styles/osm-carto/style.json';
+
+    olms(this.$refs.myMap, `${mapStyle}?apiKey=${myAPIKey}`).then((map) => {
+      map.getView().setCenter(proj.transform([initialState.lng, initialState.lat], 'EPSG:4326', 'EPSG:3857'));
+      map.getView().setZoom(initialState.zoom);
+    });
+  }
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+@import '~ol/ol.css';
+
+.map-container {
+  height: 100%;
+  width: 100%;
+}
+</style>
+```
+4. Replace YOUR_API_KEY_HERE with an API key you've got on [Geoapify MyProjects](https://myprojects.geoapify.com).
+5. Set the mapStyle variable to [Map style](https://apidocs.geoapify.com/docs/maps/map-tiles/map-tiles) you want to use. 
 
 ## Build the application
 Run `npm run build` from the application directory to compile and minify the project for production.
