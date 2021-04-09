@@ -6,7 +6,7 @@
 2. Install Node.js if not installed [from Download page](https://nodejs.org/en/download/) or [via package manager](https://nodejs.org/en/download/package-manager/).
 3. Run `npm install -g @vue/cli` to install [Vue CLI](https://cli.vuejs.org) globally. Note, `sudo` may require for this operation.
 4. Go to the application directory.
-5. Run `npm install` to get all dependancies.
+5. Run `npm install` to get all dependencies.
 6. Run `npm run serve` 
 7. Open [http://localhost:8080/](http://localhost:8080/) to view it in the browser. The page will be reloaded automatically when you make changes to the project.
 
