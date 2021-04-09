@@ -27,9 +27,17 @@ We have a Freemium pricing model. Start using our services now for FREE and exte
 ### Text editor
 You can use any text editor for writing HTML, CSS, and JavaScript. However, we recommend you try [Visual Studio Code](https://code.visualstudio.com) + [Vetur extension](https://marketplace.visualstudio.com/items?itemName=octref.vetur) to highlight your code.
 
-# STEP 2 - Option 1. Display a map with [Mapbox GL](https://docs.mapbox.com/mapbox-gl-js/api/)
+# STEP 2 - Option 1. Display a map with [MapLibre GL](https://www.npmjs.com/package/maplibre-gl)(an open-source fork of Mapbox GL)
+
+----
+
+In December 2020 the Mapbox GL JS version 2.0 was released under a proprietary license. So Mapbox GL 2.x not under the 3-Clause BSD license anymore. 
+The [MapLibre GL](https://github.com/maplibre/maplibre-gl-js) is the official open-source fork of Mapbox GL.
+
+----
+
 1. Go to the application directory.
-2. Run `npm install mapbox-gl` to install Mapbox GL library.
+2. Run `npm i maplibre-gl` to install Mapbox GL library.
 3. Modify src/components/MyMap.vue:
 * Remove placeholder
 * Add Mapbox GL Styles
@@ -40,13 +48,13 @@ You can use any text editor for writing HTML, CSS, and JavaScript. However, we r
 </template>
 
 <script>
-import mapboxgl from 'mapbox-gl';
+import maplibre from 'maplibre-gl';
 
 export default {
   name: "MyMap",
   mounted: function() {
-    const myAPIKey = "YOUR_API_KEY_HERE";
-    const mapStyle = "https://maps.geoapify.com/v1/styles/osm-carto/style.json";
+    const myAPIKey = 'YOUR_API_KEY_HERE'; 
+    const mapStyle = 'https://maps.geoapify.com/v1/styles/osm-carto/style.json';
 
     const initialState = {
       lng: 11,
@@ -54,22 +62,22 @@ export default {
       zoom: 4
     };
 
-    const map = new mapboxgl.Map({
+    const map = new maplibre.Map({
       container: this.$refs.myMap,
       style: `${mapStyle}?apiKey=${myAPIKey}`,
       center: [initialState.lng, initialState.lat],
       zoom: initialState.zoom
     });
 
-    const markerPopup = new mapboxgl.Popup().setText('Some marker');
-    new mapboxgl.Marker().setLngLat([initialState.lng, initialState.lat]).setPopup(markerPopup).addTo(map);
+    const markerPopup = new maplibre.Popup().setText('Some marker');
+    new maplibre.Marker().setLngLat([initialState.lng, initialState.lat]).setPopup(markerPopup).addTo(map);
   }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-@import "~mapbox-gl/dist/mapbox-gl.css";
+@import '~maplibre-gl/dist/maplibre-gl.css';
 
 .map-container {
   height: 100%;
@@ -81,8 +89,17 @@ export default {
 5. Set the mapStyle variable to [Map style](https://apidocs.geoapify.com/docs/maps/map-tiles/map-tiles) you want to use. 
 
 # STEP 2 - Option 2. Display a map with [Leaflet](https://leafletjs.com/)
+
+----
+
+The Leaflet library doesn't have native support for vector map tiles. There a number of Leaflet plugins that may help o visualize vector maps. However, none of them is actively supported.
+
+This tutorial contains instructions on how to visualize raster map tiles. Note, that you need in different vector maps you need to take care of high-resolution screens. Use the '@2x' suffix to get high-resolution map tile images.
+
+----
+
 1. Go to the application directory.
-2. Run `npm i leaflet mapbox-gl mapbox-gl-leaflet` to install Leaflet library and Mapbox GL Leaflet plugin to display vector maps. By default, Leaflet doesn't have the support of vector maps and map style.
+2. Run `npm i leaflet` to install Leaflet library.
 3. Modify src/components/MyMap.vue:
 * Remove placeholder
 * Add Leaflet and Mapbox GL Styles
@@ -94,35 +111,29 @@ export default {
 
 <script>
 import L from "leaflet";
-import {} from "mapbox-gl-leaflet";
 
 export default {
   name: "MyMap",
   mounted: function() {
-    const myAPIKey = "YOUR_API_KEY_HERE";
-    const mapStyle = "https://maps.geoapify.com/v1/styles/osm-carto/style.json";
-
     const initialState = {
       lng: 11,
       lat: 49,
       zoom: 4
     };
 
-    const map = L.map(this.$refs.myMap).setView(
-      [initialState.lat, initialState.lng],
-      initialState.zoom
-    );
+    const map = L.map(this.$refs.myMap).setView([initialState.lat, initialState.lng], initialState.zoom);
 
-    // the attribution is required for the Geoapify Free tariff plan
-    map.attributionControl
-      .setPrefix("")
-      .addAttribution(
-        'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>'
-      );
+    var myAPIKey = 'YOUR_API_KEY_HERE';
 
-    L.mapboxGL({
-      style: `${mapStyle}?apiKey=${myAPIKey}`,
-      accessToken: "no-token"
+    var isRetina = L.Browser.retina;
+    var baseUrl = "https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey={apiKey}";
+    var retinaUrl = "https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}@2x.png?apiKey={apiKey}";
+    
+    L.tileLayer(isRetina ? retinaUrl : baseUrl, {
+      attribution: 'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
+      apiKey: myAPIKey,
+      maxZoom: 20,
+      id: 'osm-bright',
     }).addTo(map);
   }
 };
@@ -130,7 +141,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-@import "~mapbox-gl/dist/mapbox-gl.css";
 @import "~leaflet/dist/leaflet.css";
 
 .map-container {
